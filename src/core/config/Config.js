@@ -1,7 +1,7 @@
 // Centralized configuration for the frontend
 export class Config {
-  // Keep parity with existing behavior
-  static BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
+  // Use environment variable in production, fallback to local dev server
+  static BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://127.0.0.1:8000";
 }
 
 export default Config;
