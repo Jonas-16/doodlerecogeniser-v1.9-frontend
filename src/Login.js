@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Button } from './components/UIComponents'; // reuse your Button component
+import { Button } from './components/UIComponents';
+import { AuthContext } from './AuthContext';
 
 const LoginContainer = styled.div`
   display: flex;
@@ -25,6 +26,8 @@ const FormBox = styled.div`
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -32,7 +35,7 @@ export default function Login() {
   const handleLogin = async () => {
     // Replace with real API call
     if (email === 'test@test.com' && password === '1234') {
-      localStorage.setItem('token', 'mock-token');
+      login('mock-token'); // update context + localStorage
       navigate('/');
     } else {
       setError('Invalid email or password');

@@ -1,18 +1,19 @@
-// AppRouter.js
-import React from "react";
+// src/AppRouter.js
+import React, { useContext } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./Login";   // your login page component
-import Signin from "./Signin"; // your signup page component
-import App from "./App";       // doodle app you shared
+import Login from "./Login";
+import Signin from "./Signin";
+import App from "./App";
+import { AuthContext } from "./AuthContext";
 
 function AppRouter() {
-  const isLoggedIn = !!localStorage.getItem("token");
+  const { isLoggedIn } = useContext(AuthContext);
 
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<Signin />} />
         <Route path="/" element={isLoggedIn ? <App /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
