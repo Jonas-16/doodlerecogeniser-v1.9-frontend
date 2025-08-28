@@ -1225,19 +1225,41 @@ function App() {
         </svg>
       </SideDoodle>
       <MainContainer>
-        {/* Header */}
-        <Header>
-          <HeaderLeft>
-            <BrushIcon />
-            <GlowingText>
-              <ShinyText>Doodle Recognizer</ShinyText>
-            </GlowingText>
-          </HeaderLeft>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <HamburgerButton aria-label="Open menu" onClick={() => setMobileMenuOpen(true)}>☰</HamburgerButton>
-            <InfoButton onClick={() => setShowInfo(true)} />
-          </div>
-        </Header>
+      <Header>
+        <HeaderLeft>
+          <BrushIcon />
+          <GlowingText>
+            <ShinyText>Doodle Recognizer</ShinyText>
+          </GlowingText>
+        </HeaderLeft>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <HamburgerButton aria-label="Open menu" onClick={() => setMobileMenuOpen(true)}>☰</HamburgerButton>
+          <InfoButton onClick={() => setShowInfo(true)} />
+
+          {localStorage.getItem("token") && (
+            <button
+              onClick={() => {
+                localStorage.removeItem("token"); // clear token
+                window.location.href = "/login";  // force redirect
+              }}
+              style={{
+                padding: "6px 12px",
+                borderRadius: "6px",
+                backgroundColor: "#ef4444",
+                color: "#fff",
+                fontSize: "0.85rem",
+                fontWeight: "600",
+                cursor: "pointer"
+              }}
+            >
+              Logout
+            </button>
+          )}
+        </div>
+
+      </Header>
+
         {mobileMenuOpen && (
           <MobileMenuOverlay onClick={() => setMobileMenuOpen(false)}>
             <MobileMenuContent onClick={(e) => e.stopPropagation()}>
