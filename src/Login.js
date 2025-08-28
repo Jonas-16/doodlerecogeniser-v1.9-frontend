@@ -33,12 +33,23 @@ export default function Login() {
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    // Replace with real API call
-    if (email === 'test@test.com' && password === '1234') {
-      login('mock-token'); // update context + localStorage
-      navigate('/');
-    } else {
-      setError('Invalid email or password');
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.access_token);
+        navigate("/");
+      } else {
+        const err = await response.json();
+        setError(err.detail || "Invalid email or password");
+      }
+    } catch (err) {
+      setError("Server error, try again later");
     }
   };
 

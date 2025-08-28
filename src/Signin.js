@@ -33,12 +33,35 @@ export default function Signin() {
   const [error, setError] = useState('');
 
   const handleSignin = async () => {
-    // Replace with real API call
-    if (email && password.length >= 4) {
-      login('mock-token'); // update context + localStorage
-      navigate('/');
-    } else {
-      setError('Please enter valid credentials');
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        setError(err.detail || "Signup failed");
+        return;
+      }
+
+      // after signup, automatically login
+      const loginRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (loginRes.ok) {
+        const data = await loginRes.json();
+       localStorage.setItem("token", data.access_token);
+        navigate("/");
+      } else {
+        setError("Signup succeeded, but auto-login failed");
+      }
+    } catch (err) {
+      setError("Server error, try again later");
     }
   };
 
