@@ -13,7 +13,7 @@ function AppRouter() {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signin />} />
+        <Route path="/signin" element={<Signin />} />
         <Route path="/" element={isLoggedIn ? <App /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
