@@ -9,7 +9,7 @@ const SigninContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, #180146ff, #2d0e48ff);
+  background: linear-gradient(135deg, #4a00e0, #8e2de2);
   color: #f8fafc;
 `;
 
