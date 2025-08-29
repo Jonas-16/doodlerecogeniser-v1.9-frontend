@@ -36,7 +36,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
