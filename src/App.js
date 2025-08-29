@@ -693,7 +693,7 @@ function App() {
   const [brushColor, setBrushColor] = useState(DEFAULT_STROKE_COLOR);
   const [canvasSize, setCanvasSize] = useState(getCanvasSize());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const { isLoggedIn, logout } = useContext(AuthContext);
   // Remove responsive canvas size handler since canvas size is now fixed
   // useEffect(() => {
   //   const handleResize = () => {
