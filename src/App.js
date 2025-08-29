@@ -1238,7 +1238,6 @@ function App() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <HamburgerButton aria-label="Open menu" onClick={() => setMobileMenuOpen(true)}>☰</HamburgerButton>
           <InfoButton onClick={() => setShowInfo(true)} />
-          const { isLoggedIn, logout } = useContext(AuthContext);
 
           {isLoggedIn && (
             <button
