@@ -55,8 +55,8 @@ export default function Login() {
           localStorage.setItem("user", JSON.stringify(data.user));
         }
 
-        // ✅ Redirect to home/dashboard
-        window.location.href = "/";
+        // 👇 React way: no reload
+        navigate("/");      
       } else {
         alert(data.detail || "Login failed");
       }
