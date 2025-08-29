@@ -10,6 +10,8 @@ import InfoModal from './ui/InfoModal';
 import TermsModal from './ui/TermsModal';
 import FooterBar from './ui/FooterBar';
 import { appShiny as shiny, appPulse as pulse, AppGlowingText as GlowingText, AppShinyText as ShinyText } from './ui/Styled';
+import { useContext } from "react";
+import { AuthContext } from "./AuthContext";
 
 // Centralized backend URL to avoid port mismatches
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
@@ -1236,11 +1238,12 @@ function App() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <HamburgerButton aria-label="Open menu" onClick={() => setMobileMenuOpen(true)}>☰</HamburgerButton>
           <InfoButton onClick={() => setShowInfo(true)} />
+          const { isLoggedIn, logout } = useContext(AuthContext);
 
-          {localStorage.getItem("token") && (
+          {isLoggedIn && (
             <button
               onClick={() => {
-                localStorage.removeItem("token"); // clear token
+                logout(); // clears token + state
                 window.location.href = "/login";  // force redirect
               }}
               style={{

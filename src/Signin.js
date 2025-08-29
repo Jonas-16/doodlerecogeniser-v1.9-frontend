@@ -47,7 +47,7 @@ export default function Signin() {
       }
 
       // after signup, automatically login
-      const loginRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/signup`, {
+      const loginRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -55,7 +55,8 @@ export default function Signin() {
 
       if (loginRes.ok) {
         const data = await loginRes.json();
-       localStorage.setItem("token", data.access_token);
+        localStorage.setItem("token", data.access_token);
+        login(data.access_token);   // ✅ update global context
         navigate("/");
       } else {
         setError("Signup succeeded, but auto-login failed");
