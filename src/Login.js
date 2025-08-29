@@ -32,24 +32,37 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
+
+      if (response.ok && data.access_token) {
+        // ✅ Save token in localStorage
         localStorage.setItem("token", data.access_token);
-        navigate("/");
+
+        // Optional: Save user info if backend sends it
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+
+        // ✅ Redirect to home/dashboard
+        window.location.href = "/";
       } else {
-        const err = await response.json();
-        setError(err.detail || "Invalid email or password");
+        alert(data.detail || "Login failed");
       }
-    } catch (err) {
-      setError("Server error, try again later");
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Something went wrong. Try again.");
     }
   };
 
