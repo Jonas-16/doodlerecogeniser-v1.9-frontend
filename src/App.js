@@ -14,6 +14,7 @@ import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import Login from "./Login";
 import Signup from "./Signup";
+import Signin from "./Signin";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -1719,7 +1720,7 @@ function App() {
         }
       />
       <Route path="/login" element={<Login />} />
-      <Route path="/signin" element={<Signup />} />
+      <Route path="/signin" element={<Signin />} />
       {/* Add other routes as needed */}
     </Routes>
   );
