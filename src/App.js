@@ -13,7 +13,6 @@ import { appShiny as shiny, appPulse as pulse, AppGlowingText as GlowingText, Ap
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import Login from "./Login";
-import Signup from "./Signup";
 import Signin from "./Signin";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
