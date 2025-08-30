@@ -38,25 +38,22 @@ export default function Login() {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       });
 
       const data = await response.json();
 
       if (response.ok && data.access_token) {
-        // ✅ Save token in localStorage
-        localStorage.setItem("token", data.access_token);
+        // 🔑 use AuthContext
+        login(data.access_token);
 
-        // Optional: Save user info if backend sends it
+        // optional: save user info
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
         }
 
-        // 👇 React way: no reload
-        navigate("/");      
+        navigate("/");
       } else {
         alert(data.detail || "Login failed");
       }

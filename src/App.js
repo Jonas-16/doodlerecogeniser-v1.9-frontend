@@ -12,6 +12,10 @@ import FooterBar from './ui/FooterBar';
 import { appShiny as shiny, appPulse as pulse, AppGlowingText as GlowingText, AppShinyText as ShinyText } from './ui/Styled';
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+import Login from "./Login";
+import Signup from "./Signup";
+import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
 
 // Centralized backend URL to avoid port mismatches
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
@@ -1194,518 +1198,531 @@ function App() {
   };
 
   return (
-    <AppContainer>
-      {/* Decorative side doodles (non-interactive) */}
-      <SideDoodle side="left" aria-hidden>
-        <svg viewBox="0 0 300 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="doodleGradL" x1="0" y1="0" x2="300" y2="0" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#60a5fa"/>
-              <stop offset="0.5" stopColor="#a78bfa"/>
-              <stop offset="1" stopColor="#f472b6"/>
-            </linearGradient>
-          </defs>
-          <path d="M10 20 C 100 60, 40 140, 120 180 S 220 280, 160 340 S 60 450, 140 520" stroke="url(#doodleGradL)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-          <circle cx="80" cy="100" r="10" fill="#60a5fa"/>
-          <circle cx="200" cy="260" r="8" fill="#a78bfa"/>
-          <circle cx="120" cy="420" r="6" fill="#f472b6"/>
-        </svg>
-      </SideDoodle>
-      <SideDoodle side="right" aria-hidden>
-        <svg viewBox="0 0 300 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="doodleGradR" x1="300" y1="0" x2="0" y2="0" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#f472b6"/>
-              <stop offset="0.5" stopColor="#a78bfa"/>
-              <stop offset="1" stopColor="#60a5fa"/>
-            </linearGradient>
-          </defs>
-          <path d="M290 40 C 220 100, 260 160, 200 210 S 100 310, 180 370 S 260 470, 190 520" stroke="url(#doodleGradR)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-          <circle cx="220" cy="140" r="9" fill="#f472b6"/>
-          <circle cx="120" cy="330" r="7" fill="#a78bfa"/>
-          <circle cx="210" cy="480" r="6" fill="#60a5fa"/>
-        </svg>
-      </SideDoodle>
-      <MainContainer>
-      <Header>
-        <HeaderLeft>
-          <BrushIcon />
-          <GlowingText>
-            <ShinyText>Doodle Recognizer</ShinyText>
-          </GlowingText>
-        </HeaderLeft>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            {/* Your main app UI */}
+            <AppContainer>
+              {/* Decorative side doodles (non-interactive) */}
+              <SideDoodle side="left" aria-hidden>
+                <svg viewBox="0 0 300 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="doodleGradL" x1="0" y1="0" x2="300" y2="0" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#60a5fa"/>
+                      <stop offset="0.5" stopColor="#a78bfa"/>
+                      <stop offset="1" stopColor="#f472b6"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M10 20 C 100 60, 40 140, 120 180 S 220 280, 160 340 S 60 450, 140 520" stroke="url(#doodleGradL)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="80" cy="100" r="10" fill="#60a5fa"/>
+                  <circle cx="200" cy="260" r="8" fill="#a78bfa"/>
+                  <circle cx="120" cy="420" r="6" fill="#f472b6"/>
+                </svg>
+              </SideDoodle>
+              <SideDoodle side="right" aria-hidden>
+                <svg viewBox="0 0 300 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="doodleGradR" x1="300" y1="0" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#f472b6"/>
+                      <stop offset="0.5" stopColor="#a78bfa"/>
+                      <stop offset="1" stopColor="#60a5fa"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M290 40 C 220 100, 260 160, 200 210 S 100 310, 180 370 S 260 470, 190 520" stroke="url(#doodleGradR)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="220" cy="140" r="9" fill="#f472b6"/>
+                  <circle cx="120" cy="330" r="7" fill="#a78bfa"/>
+                  <circle cx="210" cy="480" r="6" fill="#60a5fa"/>
+                </svg>
+              </SideDoodle>
+              <MainContainer>
+              <Header>
+                <HeaderLeft>
+                  <BrushIcon />
+                  <GlowingText>
+                    <ShinyText>Doodle Recognizer</ShinyText>
+                  </GlowingText>
+                </HeaderLeft>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <HamburgerButton aria-label="Open menu" onClick={() => setMobileMenuOpen(true)}>☰</HamburgerButton>
-          <InfoButton onClick={() => setShowInfo(true)} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <HamburgerButton aria-label="Open menu" onClick={() => setMobileMenuOpen(true)}>☰</HamburgerButton>
+                  <InfoButton onClick={() => setShowInfo(true)} />
 
-          {isLoggedIn && (
-            <button
-              onClick={() => {
-                logout(); // clears token + state
-                window.location.href = "/login";  // force redirect
-              }}
-              style={{
-                padding: "6px 12px",
-                borderRadius: "6px",
-                backgroundColor: "#ef4444",
-                color: "#fff",
-                fontSize: "0.85rem",
-                fontWeight: "600",
-                cursor: "pointer"
-              }}
-            >
-              Logout
-            </button>
-          )}
-        </div>
-
-      </Header>
-
-        {mobileMenuOpen && (
-          <MobileMenuOverlay onClick={() => setMobileMenuOpen(false)}>
-            <MobileMenuContent onClick={(e) => e.stopPropagation()}>
-              <MobileMenuHeader>
-                <span>Controls</span>
-                <CloseButton onClick={() => setMobileMenuOpen(false)} />
-              </MobileMenuHeader>
-
-              <SectionTitle>Brush Size</SectionTitle>
-              <ButtonGroup style={{ marginTop: 8 }}>
-                <Button onClick={() => setStrokeWidth(Math.max(1, strokeWidth - 2))}>-</Button>
-                <div style={{ alignSelf: 'center', color: '#a5b4fc', minWidth: 56, textAlign: 'center' }}>{strokeWidth}px</div>
-                <Button onClick={() => setStrokeWidth(Math.min(100, strokeWidth + 2))}>+</Button>
-              </ButtonGroup>
-
-              <SectionTitle>Brush Color</SectionTitle>
-              <ColorPicker>
-                {['#000000','#ff0000','#00ff00','#0000ff','#ffffff','#ffa500','#800080','#00ffff'].map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => setBrushColor(c)}
-                    style={{ width: 24, height: 24, borderRadius: 6, border: c === brushColor ? '2px solid #fff' : '1px solid #555', background: c, cursor: 'pointer' }}
-                    aria-label={`Set color ${c}`}
-                  />
-                ))}
-                <button
-                  onClick={() => setIsErasing(!isErasing)}
-                  style={{ marginLeft: 8, padding: '4px 8px', borderRadius: 6, border: '1px solid #555', background: isErasing ? 'rgba(255,255,255,0.2)' : 'transparent', color: '#fff' }}
-                >
-                  {isErasing ? 'Eraser On' : 'Eraser Off'}
-                </button>
-              </ColorPicker>
-
-              <SectionTitle>Downloads</SectionTitle>
-              <Button fullWidth onClick={downloadUserDrawing}>💾 Save Original</Button>
-              <Button fullWidth onClick={downloadProcessedImage}>📥 Save Processed</Button>
-            </MobileMenuContent>
-          </MobileMenuOverlay>
-        )}
-        
-        {/* Main Content - Three Column Layout */}
-        <MainContent>
-          {/* Left Panel - Drawing Tools */}
-          <Panel>
-            <DarkPanel>
-              {/* Tools Section */}
-              <div style={{ 
-                background: 'rgba(99, 102, 241, 0.2)',
-                borderRadius: '12px',
-                padding: '12px',
-                marginBottom: '16px',
-                border: '1px solid rgba(99, 102, 241, 0.3)'
-              }}>
-                <h3 style={{ 
-                  color: '#e2e8f0',
-                  margin: '0 0 12px 0',
-                  fontWeight: '600',
-                  fontSize: '0.95rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px'
-                }}>
-                  Drawing Tools
-                </h3>
-                
-                <p style={{ 
-                  color: '#a5b4fc', 
-                  marginBottom: '12px', 
-                  fontSize: '0.85rem',
-                  fontWeight: '500',
-                  margin: '0 0 12px 0'
-                }}>
-                  Brush Size
-                </p>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '6px', 
-                  marginBottom: '16px',
-                  background: 'rgba(99, 102, 241, 0.2)',
-                  borderRadius: '8px',
-                  padding: '6px',
-                  border: '1px solid rgba(99, 102, 241, 0.2)'
-                }}>
-                  <Button
-                    onClick={() => setStrokeWidth(Math.max(1, strokeWidth - 2))}
-                    style={{ 
-                      minWidth: '30px', 
-                      padding: '0', 
-                      color: '#e2e8f0', 
-                      borderColor: 'rgba(99, 102, 241, 0.4)',
-                      minHeight: '30px',
-                      margin: 0
-                    }}
-                  >-</Button>
-                  <div style={{ 
-                    background: 'rgba(99, 102, 241, 0.15)',
-                    borderRadius: '4px',
-                    padding: '4px 12px'
-                  }}>
-                    <span style={{ 
-                      color: '#e2e8f0', 
-                      minWidth: '40px', 
-                      textAlign: 'center', 
-                      fontSize: '0.85rem',
-                      fontWeight: '600',
-                      display: 'inline-block'
-                    }}>
-                      {strokeWidth}px
-                    </span>
-                  </div>
-                  <Button
-                    onClick={() => setStrokeWidth(Math.min(100, strokeWidth + 2))}
-                    style={{ 
-                      minWidth: '30px', 
-                      padding: '0', 
-                      color: '#e2e8f0', 
-                      borderColor: 'rgba(99, 102, 241, 0.4)',
-                      minHeight: '30px',
-                      margin: 0
-                    }}
-                  >+</Button>
-                </div>
-
-                <Button
-                  fullWidth
-                  onClick={() => setIsErasing(!isErasing)}
-                  style={{ 
-                    marginBottom: '16px', 
-                    textTransform: 'none', 
-                    fontSize: '0.85rem', 
-                    padding: '8px',
-                    borderRadius: '8px',
-                    borderWidth: '1px',
-                    borderColor: isErasing ? 'rgba(239, 68, 68, 0.5)' : 'rgba(99, 102, 241, 0.4)',
-                    backgroundColor: isErasing 
-                      ? 'rgba(239, 68, 68, 0.1)' 
-                      : 'rgba(99, 102, 241, 0.1)',
-                    color: isErasing ? '#fecaca' : '#a5b4fc'
-                  }}
-                >
-                  {isErasing ? '🧹 Eraser' : '✏️ Pencil'}
-                </Button>
-
-                <div style={{ marginBottom: '16px' }}>
-                  <p style={{ 
-                    color: '#a5b4fc', 
-                    marginBottom: '12px', 
-                    fontSize: '0.85rem',
-                    fontWeight: '500',
-                    margin: '0 0 12px 0'
-                  }}>
-                    Color
-                  </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '2px', marginTop: '4px' }}>
-                    {['#000000', '#dc2626', '#2563eb', '#10b981', '#f59e0b', '#8b5cf6'].map((color) => (
-                      <div
-                        key={color}
-                        onClick={() => setBrushColor(color)}
-                        style={{
-                          width: '20px',
-                          height: '20px',
-                          borderRadius: '50%',
-                          backgroundColor: color,
-                          cursor: 'pointer',
-                          border: brushColor === color ? '2px solid white' : '2px solid transparent',
-                          transition: 'all 0.2s ease'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                <Button
-                  fullWidth
-                  onClick={resetCanvasAndFeedback}
-                  style={{
-                    color: '#e2e8f0',
-                    borderColor: '#4b5563',
-                    backgroundColor: 'rgba(75, 85, 99, 0.1)',
-                    fontSize: '0.85rem',
-                    fontWeight: '500',
-                    textTransform: 'none',
-                    borderRadius: '8px'
-                  }}
-                >
-                  🗑️ Clear Canvas
-                </Button>
-              </div>
-            </DarkPanel>
-
-            {/* Actions Section */}
-            <div style={{ 
-              padding: '12px', 
-              borderRadius: '8px',
-              background: '#f8fafc',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-              marginBottom: '16px'
-            }}>
-              <h3 style={{ 
-                marginBottom: '12px', 
-                fontWeight: '800', 
-                fontSize: '1.1rem',
-                background: 'linear-gradient(90deg, #4a00e0, #8e2de2, #4a00e0)',
-                backgroundSize: '200% auto',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                animation: `${shiny} 4s linear infinite`,
-                margin: '0 0 12px 0'
-              }}>
-                ACTIONS
-              </h3>
-              
-              <Button
-                fullWidth
-                primary
-                onClick={handleEnhance}
-                disabled={isEnhancing}
-                style={{ textTransform: 'none', fontSize: '0.75rem' }}
-              >
-                {isEnhancing ? '⏳ Generating...' : '🎨 Generate AI Image'}
-              </Button>
-
-              <Button
-                fullWidth
-                onClick={downloadUserDrawing}
-                style={{ 
-                  textTransform: 'none', 
-                  fontSize: '0.92rem',
-                  fontWeight: '600',
-                  backgroundColor: 'rgba(49, 46, 129, 0.95)',
-                  color: '#ffffff',
-                  textShadow: '0 1px 1px rgba(0, 0, 0, 0.36)',
-                  border: '1px solid rgba(99, 102, 241, 0.8)',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                  marginBottom: '8px',
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: 'rgba(37, 35, 96, 0.95)',
-                    transform: 'translateY(-1px)',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.25)'
-                  }
-                }}
-              >
-                💾 Save Drawing
-              </Button>
-
-              <Button
-                fullWidth
-                onClick={downloadProcessedImage}
-                style={{ 
-                  textTransform: 'none', 
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  backgroundColor: 'rgba(49, 46, 129, 0.95)',
-                  color: '#ffffff',
-                  textShadow: '0 1px 1px rgba(0,0,0,0.3)',
-                  border: '1px solid rgba(99, 102, 241, 0.8)',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: 'rgba(37, 35, 96, 0.95)',
-                    transform: 'translateY(-1px)',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.25)'
-                  }
-                }}
-              >
-                📥 Save Processed
-              </Button>
-            </div>
-          </Panel>
-          
-          {/* Center Panel - Canvas */}
-          <CanvasContainer>
-            <CanvasWrapper>
-              <CanvasFrame>
-                <Canvas
-                  ref={canvasRef}
-                  width={canvasSize.width}
-                  height={canvasSize.height}
-                  onPointerDown={handlePointerDown}
-                  onPointerMove={handlePointerMove}
-                  onPointerUp={handlePointerUp}
-                  onPointerLeave={handlePointerUp}
-                  style={{
-                    width: `${canvasSize.width}px`,
-                    height: `${canvasSize.height}px`,
-                  }}
-                />
-              </CanvasFrame>
-              {/* Mobile-only action buttons below the canvas */}
-              <MobileOnly>
-                <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                  <Button
-                    primary
-                    onClick={handlePredict}
-                    disabled={loading}
-                    fullWidth
-                    style={{ textTransform: 'none', fontSize: '0.9rem' }}
-                  >
-                    {loading ? 'Predicting…' : 'Predict Doodle'}
-                  </Button>
-                  <Button
-                    onClick={handleEnhance}
-                    disabled={isEnhancing}
-                    fullWidth
-                    style={{ textTransform: 'none', fontSize: '0.9rem' }}
-                  >
-                    {isEnhancing ? 'Generating…' : 'Generate AI'}
-                  </Button>
-                  <Button
-                    onClick={clearCanvas}
-                    fullWidth
-                    style={{ textTransform: 'none', fontSize: '0.9rem' }}
-                  >
-                    Clear Canvas
-                  </Button>
-                </div>
-              </MobileOnly>
-              {/* Mobile-only prediction box below canvas */}
-              <MobileOnly>
-                <SectionTitle>Prediction</SectionTitle>
-                <MobilePredictionBox>
-                  {loading ? (
-                    <div>Analyzing your drawing...</div>
-                  ) : (
-                    <>
-                      <div style={{ marginBottom: 6 }}>
-                        <strong>Result:</strong>
-                        <div style={{ marginTop: 4 }}>
-                          {prediction ? (
-                            <>
-                              <div style={{ fontSize: 16, fontWeight: 800, color: '#f8fafc' }}>{prediction}</div>
-                              <div style={{ color: '#e2e8f0', fontWeight: 600, marginBottom: 6 }}>Confidence: {Math.round((predictionConfidence || 0) * 100)}%</div>
-                              <ProgressWrap>
-                                <ProgressBar value={Math.round((predictionConfidence || 0) * 100)} />
-                              </ProgressWrap>
-                            </>
-                          ) : (
-                            <div>No prediction yet</div>
-                          )}
-                        </div>
-                      </div>
-                      {topPredictions && topPredictions.length > 0 && (
-                        <div style={{ marginTop: 6 }}>
-                          <strong>Top guesses:</strong>
-                          <ul style={{ marginTop: 4, paddingLeft: 18 }}>
-                            {topPredictions.slice(0, 3).map((p, idx) => (
-                              <li key={idx}>
-                                {p.class} — {Math.round((p.confidence || 0) * 100)}%
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      {genAiPrediction && (
-                        <div style={{ marginTop: 8 }}>
-                          <strong>AI says:</strong>
-                          <div style={{ marginTop: 4, whiteSpace: 'pre-wrap' }}>{genAiPrediction}</div>
-                        </div>
-                      )}
-                    </>
+                  {isLoggedIn && (
+                    <button
+                      onClick={() => {
+                        logout(); // clears token + state
+                        window.location.href = "/login";  // force redirect
+                      }}
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: "6px",
+                        backgroundColor: "#ef4444",
+                        color: "#fff",
+                        fontSize: "0.85rem",
+                        fontWeight: "600",
+                        cursor: "pointer"
+                      }}
+                    >
+                      Logout
+                    </button>
                   )}
-                </MobilePredictionBox>
-              </MobileOnly>
+                </div>
 
-              <ButtonGroup maxWidth={canvasSize.width + 'px'}>
-                <Button
-                  primary
-                  onClick={handlePredict}
-                  disabled={loading}
-                  fullWidth
-                  style={{ 
-                    padding: '12px',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    textTransform: 'none',
-                    borderRadius: '8px'
-                  }}
-                >
-                  {loading ? 'Predicting...' : 'Predict Doodle'}
-                </Button>
-                <Button
-                  onClick={handleEnhance}
-                  disabled={isEnhancing}
-                  fullWidth
-                  style={{
-                    color: '#e2e8f0',
-                    borderColor: '#4b5563',
-                    padding: '12px',
-                    fontSize: '1rem',
-                    fontWeight: '500',
-                    textTransform: 'none',
-                    borderRadius: '8px'
-                  }}
-                >
-                  {isEnhancing ? 'Generating...' : 'Generate with AI'}
-                </Button>
-              </ButtonGroup>
-            </CanvasWrapper>
-          </CanvasContainer>
-          
-          {/* Right Panel - AI Analysis, Prediction Results & Actions */}
-          <Panel>
-            <AIAnalysisPanel genAiLoading={genAiLoading} genAiPrediction={genAiPrediction} />
+              </Header>
 
-            {/* Prediction Results Section */}
-            <PredictionResults 
-              prediction={prediction} 
-              predictionConfidence={predictionConfidence} 
-            />
-          </Panel>
-        </MainContent>
+                {mobileMenuOpen && (
+                  <MobileMenuOverlay onClick={() => setMobileMenuOpen(false)}>
+                    <MobileMenuContent onClick={(e) => e.stopPropagation()}>
+                      <MobileMenuHeader>
+                        <span>Controls</span>
+                        <CloseButton onClick={() => setMobileMenuOpen(false)} />
+                      </MobileMenuHeader>
 
-        
+                      <SectionTitle>Brush Size</SectionTitle>
+                      <ButtonGroup style={{ marginTop: 8 }}>
+                        <Button onClick={() => setStrokeWidth(Math.max(1, strokeWidth - 2))}>-</Button>
+                        <div style={{ alignSelf: 'center', color: '#a5b4fc', minWidth: 56, textAlign: 'center' }}>{strokeWidth}px</div>
+                        <Button onClick={() => setStrokeWidth(Math.min(100, strokeWidth + 2))}>+</Button>
+                      </ButtonGroup>
 
-        {/* Feedback Display */}
-        {feedback && (
-          <FeedbackBox>
-            <p style={{ margin: 0, fontSize: '0.875rem' }}>
-              {feedback}
-            </p>
-          </FeedbackBox>
-        )}
-      </MainContainer>
+                      <SectionTitle>Brush Color</SectionTitle>
+                      <ColorPicker>
+                        {['#000000','#ff0000','#00ff00','#0000ff','#ffffff','#ffa500','#800080','#00ffff'].map((c) => (
+                          <button
+                            key={c}
+                            onClick={() => setBrushColor(c)}
+                            style={{ width: 24, height: 24, borderRadius: 6, border: c === brushColor ? '2px solid #fff' : '1px solid #555', background: c, cursor: 'pointer' }}
+                            aria-label={`Set color ${c}`}
+                          />
+                        ))}
+                        <button
+                          onClick={() => setIsErasing(!isErasing)}
+                          style={{ marginLeft: 8, padding: '4px 8px', borderRadius: 6, border: '1px solid #555', background: isErasing ? 'rgba(255,255,255,0.2)' : 'transparent', color: '#fff' }}
+                        >
+                          {isErasing ? 'Eraser On' : 'Eraser Off'}
+                        </button>
+                      </ColorPicker>
 
-      {/* Info Modal */}
-      <InfoModal open={showInfo} onClose={() => setShowInfo(false)} />
-      
-      <FooterBar 
-        onAbout={() => setShowInfo(true)}
-        onPrivacy={() => { setActiveTab('privacy'); setShowTerms(true); }}
-        onTerms={() => { setActiveTab('terms'); setShowTerms(true); }}
+                      <SectionTitle>Downloads</SectionTitle>
+                      <Button fullWidth onClick={downloadUserDrawing}>💾 Save Original</Button>
+                      <Button fullWidth onClick={downloadProcessedImage}>📥 Save Processed</Button>
+                    </MobileMenuContent>
+                  </MobileMenuOverlay>
+                )}
+                
+                {/* Main Content - Three Column Layout */}
+                <MainContent>
+                  {/* Left Panel - Drawing Tools */}
+                  <Panel>
+                    <DarkPanel>
+                      {/* Tools Section */}
+                      <div style={{ 
+                        background: 'rgba(99, 102, 241, 0.2)',
+                        borderRadius: '12px',
+                        padding: '12px',
+                        marginBottom: '16px',
+                        border: '1px solid rgba(99, 102, 241, 0.3)'
+                      }}>
+                        <h3 style={{ 
+                          color: '#e2e8f0',
+                          margin: '0 0 12px 0',
+                          fontWeight: '600',
+                          fontSize: '0.95rem',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          Drawing Tools
+                        </h3>
+                        
+                        <p style={{ 
+                          color: '#a5b4fc', 
+                          marginBottom: '12px', 
+                          fontSize: '0.85rem',
+                          fontWeight: '500',
+                          margin: '0 0 12px 0'
+                        }}>
+                          Brush Size
+                        </p>
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '6px', 
+                          marginBottom: '16px',
+                          background: 'rgba(99, 102, 241, 0.2)',
+                          borderRadius: '8px',
+                          padding: '6px',
+                          border: '1px solid rgba(99, 102, 241, 0.2)'
+                        }}>
+                          <Button
+                            onClick={() => setStrokeWidth(Math.max(1, strokeWidth - 2))}
+                            style={{ 
+                              minWidth: '30px', 
+                              padding: '0', 
+                              color: '#e2e8f0', 
+                              borderColor: 'rgba(99, 102, 241, 0.4)',
+                              minHeight: '30px',
+                              margin: 0
+                            }}
+                          >-</Button>
+                          <div style={{ 
+                            background: 'rgba(99, 102, 241, 0.15)',
+                            borderRadius: '4px',
+                            padding: '4px 12px'
+                          }}>
+                            <span style={{ 
+                              color: '#e2e8f0', 
+                              minWidth: '40px', 
+                              textAlign: 'center', 
+                              fontSize: '0.85rem',
+                              fontWeight: '600',
+                              display: 'inline-block'
+                            }}>
+                              {strokeWidth}px
+                            </span>
+                          </div>
+                          <Button
+                            onClick={() => setStrokeWidth(Math.min(100, strokeWidth + 2))}
+                            style={{ 
+                              minWidth: '30px', 
+                              padding: '0', 
+                              color: '#e2e8f0', 
+                              borderColor: 'rgba(99, 102, 241, 0.4)',
+                              minHeight: '30px',
+                              margin: 0
+                            }}
+                          >+</Button>
+                        </div>
+
+                        <Button
+                          fullWidth
+                          onClick={() => setIsErasing(!isErasing)}
+                          style={{ 
+                            marginBottom: '16px', 
+                            textTransform: 'none', 
+                            fontSize: '0.85rem', 
+                            padding: '8px',
+                            borderRadius: '8px',
+                            borderWidth: '1px',
+                            borderColor: isErasing ? 'rgba(239, 68, 68, 0.5)' : 'rgba(99, 102, 241, 0.4)',
+                            backgroundColor: isErasing 
+                              ? 'rgba(239, 68, 68, 0.1)' 
+                              : 'rgba(99, 102, 241, 0.1)',
+                            color: isErasing ? '#fecaca' : '#a5b4fc'
+                          }}
+                        >
+                          {isErasing ? '🧹 Eraser' : '✏️ Pencil'}
+                        </Button>
+
+                        <div style={{ marginBottom: '16px' }}>
+                          <p style={{ 
+                            color: '#a5b4fc', 
+                            marginBottom: '12px', 
+                            fontSize: '0.85rem',
+                            fontWeight: '500',
+                            margin: '0 0 12px 0'
+                          }}>
+                            Color
+                          </p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '2px', marginTop: '4px' }}>
+                            {['#000000', '#dc2626', '#2563eb', '#10b981', '#f59e0b', '#8b5cf6'].map((color) => (
+                              <div
+                                key={color}
+                                onClick={() => setBrushColor(color)}
+                                style={{
+                                  width: '20px',
+                                  height: '20px',
+                                  borderRadius: '50%',
+                                  backgroundColor: color,
+                                  cursor: 'pointer',
+                                  border: brushColor === color ? '2px solid white' : '2px solid transparent',
+                                  transition: 'all 0.2s ease'
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <Button
+                          fullWidth
+                          onClick={resetCanvasAndFeedback}
+                          style={{
+                            color: '#e2e8f0',
+                            borderColor: '#4b5563',
+                            backgroundColor: 'rgba(75, 85, 99, 0.1)',
+                            fontSize: '0.85rem',
+                            fontWeight: '500',
+                            textTransform: 'none',
+                            borderRadius: '8px'
+                          }}
+                        >
+                          🗑️ Clear Canvas
+                        </Button>
+                      </div>
+                    </DarkPanel>
+
+                    {/* Actions Section */}
+                    <div style={{ 
+                      padding: '12px', 
+                      borderRadius: '8px',
+                      background: '#f8fafc',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                      marginBottom: '16px'
+                    }}>
+                      <h3 style={{ 
+                        marginBottom: '12px', 
+                        fontWeight: '800', 
+                        fontSize: '1.1rem',
+                        background: 'linear-gradient(90deg, #4a00e0, #8e2de2, #4a00e0)',
+                        backgroundSize: '200% auto',
+                        backgroundClip: 'text',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        animation: `${shiny} 4s linear infinite`,
+                        margin: '0 0 12px 0'
+                      }}>
+                        ACTIONS
+                      </h3>
+                      
+                      <Button
+                        fullWidth
+                        primary
+                        onClick={handleEnhance}
+                        disabled={isEnhancing}
+                        style={{ textTransform: 'none', fontSize: '0.75rem' }}
+                      >
+                        {isEnhancing ? '⏳ Generating...' : '🎨 Generate AI Image'}
+                      </Button>
+
+                      <Button
+                        fullWidth
+                        onClick={downloadUserDrawing}
+                        style={{ 
+                          textTransform: 'none', 
+                          fontSize: '0.92rem',
+                          fontWeight: '600',
+                          backgroundColor: 'rgba(49, 46, 129, 0.95)',
+                          color: '#ffffff',
+                          textShadow: '0 1px 1px rgba(0, 0, 0, 0.36)',
+                          border: '1px solid rgba(99, 102, 241, 0.8)',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          marginBottom: '8px',
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            backgroundColor: 'rgba(37, 35, 96, 0.95)',
+                            transform: 'translateY(-1px)',
+                            boxShadow: '0 4px 8px rgba(0,0,0,0.25)'
+                          }
+                        }}
+                      >
+                        💾 Save Drawing
+                      </Button>
+
+                      <Button
+                        fullWidth
+                        onClick={downloadProcessedImage}
+                        style={{ 
+                          textTransform: 'none', 
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                          backgroundColor: 'rgba(49, 46, 129, 0.95)',
+                          color: '#ffffff',
+                          textShadow: '0 1px 1px rgba(0, 0, 0, 0.3)',
+                          border: '1px solid rgba(99, 102, 241, 0.8)',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            backgroundColor: 'rgba(37, 35, 96, 0.95)',
+                            transform: 'translateY(-1px)',
+                            boxShadow: '0 4px 8px rgba(0,0,0,0.25)'
+                          }
+                        }}
+                      >
+                        📥 Save Processed
+                      </Button>
+                    </div>
+                  </Panel>
+                  
+                  {/* Center Panel - Canvas */}
+                  <CanvasContainer>
+                    <CanvasWrapper>
+                      <CanvasFrame>
+                        <Canvas
+                          ref={canvasRef}
+                          width={canvasSize.width}
+                          height={canvasSize.height}
+                          onPointerDown={handlePointerDown}
+                          onPointerMove={handlePointerMove}
+                          onPointerUp={handlePointerUp}
+                          onPointerLeave={handlePointerUp}
+                          style={{
+                            width: `${canvasSize.width}px`,
+                            height: `${canvasSize.height}px`,
+                          }}
+                        />
+                      </CanvasFrame>
+                      {/* Mobile-only action buttons below the canvas */}
+                      <MobileOnly>
+                        <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                          <Button
+                            primary
+                            onClick={handlePredict}
+                            disabled={loading}
+                            fullWidth
+                            style={{ textTransform: 'none', fontSize: '0.9rem' }}
+                          >
+                            {loading ? 'Predicting…' : 'Predict Doodle'}
+                          </Button>
+                          <Button
+                            onClick={handleEnhance}
+                            disabled={isEnhancing}
+                            fullWidth
+                            style={{ textTransform: 'none', fontSize: '0.9rem' }}
+                          >
+                            {isEnhancing ? 'Generating…' : 'Generate AI'}
+                          </Button>
+                          <Button
+                            onClick={clearCanvas}
+                            fullWidth
+                            style={{ textTransform: 'none', fontSize: '0.9rem' }}
+                          >
+                            Clear Canvas
+                          </Button>
+                        </div>
+                      </MobileOnly>
+                      {/* Mobile-only prediction box below canvas */}
+                      <MobileOnly>
+                        <SectionTitle>Prediction</SectionTitle>
+                        <MobilePredictionBox>
+                          {loading ? (
+                            <div>Analyzing your drawing...</div>
+                          ) : (
+                            <>
+                              <div style={{ marginBottom: 6 }}>
+                                <strong>Result:</strong>
+                                <div style={{ marginTop: 4 }}>
+                                  {prediction ? (
+                                    <>
+                                      <div style={{ fontSize: 16, fontWeight: 800, color: '#f8fafc' }}>{prediction}</div>
+                                      <div style={{ color: '#e2e8f0', fontWeight: 600, marginBottom: 6 }}>Confidence: {Math.round((predictionConfidence || 0) * 100)}%</div>
+                                      <ProgressWrap>
+                                        <ProgressBar value={Math.round((predictionConfidence || 0) * 100)} />
+                                      </ProgressWrap>
+                                    </>
+                                  ) : (
+                                    <div>No prediction yet</div>
+                                  )}
+                                </div>
+                              </div>
+                              {topPredictions && topPredictions.length > 0 && (
+                                <div style={{ marginTop: 6 }}>
+                                  <strong>Top guesses:</strong>
+                                  <ul style={{ marginTop: 4, paddingLeft: 18 }}>
+                                    {topPredictions.slice(0, 3).map((p, idx) => (
+                                      <li key={idx}>
+                                        {p.class} — {Math.round((p.confidence || 0) * 100)}%
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {genAiPrediction && (
+                                <div style={{ marginTop: 8 }}>
+                                  <strong>AI says:</strong>
+                                  <div style={{ marginTop: 4, whiteSpace: 'pre-wrap' }}>{genAiPrediction}</div>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </MobilePredictionBox>
+                      </MobileOnly>
+
+                      <ButtonGroup maxWidth={canvasSize.width + 'px'}>
+                        <Button
+                          primary
+                          onClick={handlePredict}
+                          disabled={loading}
+                          fullWidth
+                          style={{ 
+                            padding: '12px',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            textTransform: 'none',
+                            borderRadius: '8px'
+                          }}
+                        >
+                          {loading ? 'Predicting...' : 'Predict Doodle'}
+                        </Button>
+                        <Button
+                          onClick={handleEnhance}
+                          disabled={isEnhancing}
+                          fullWidth
+                          style={{
+                            color: '#e2e8f0',
+                            borderColor: '#4b5563',
+                            padding: '12px',
+                            fontSize: '1rem',
+                            fontWeight: '500',
+                            textTransform: 'none',
+                            borderRadius: '8px'
+                          }}
+                        >
+                          {isEnhancing ? 'Generating...' : 'Generate with AI'}
+                        </Button>
+                      </ButtonGroup>
+                    </CanvasWrapper>
+                  </CanvasContainer>
+                  
+                  {/* Right Panel - AI Analysis, Prediction Results & Actions */}
+                  <Panel>
+                    <AIAnalysisPanel genAiLoading={genAiLoading} genAiPrediction={genAiPrediction} />
+
+                    {/* Prediction Results Section */}
+                    <PredictionResults 
+                      prediction={prediction} 
+                      predictionConfidence={predictionConfidence} 
+                    />
+                  </Panel>
+                </MainContent>
+
+                
+
+                {/* Feedback Display */}
+                {feedback && (
+                  <FeedbackBox>
+                    <p style={{ margin: 0, fontSize: '0.875rem' }}>
+                      {feedback}
+                    </p>
+                  </FeedbackBox>
+                )}
+              </MainContainer>
+
+              {/* Info Modal */}
+              <InfoModal open={showInfo} onClose={() => setShowInfo(false)} />
+              
+              <FooterBar 
+                onAbout={() => setShowInfo(true)}
+                onPrivacy={() => { setActiveTab('privacy'); setShowTerms(true); }}
+                onTerms={() => { setActiveTab('terms'); setShowTerms(true); }}
+              />
+
+              {/* Terms and Privacy Modal */}
+              <TermsModal 
+                open={showTerms}
+                onClose={() => setShowTerms(false)}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+              />
+            </AppContainer>
+          </ProtectedRoute>
+        }
       />
-
-      {/* Terms and Privacy Modal */}
-      <TermsModal 
-        open={showTerms}
-        onClose={() => setShowTerms(false)}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-      />
-    </AppContainer>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signin" element={<Signup />} />
+      {/* Add other routes as needed */}
+    </Routes>
   );
 }
 
-export default App; 
+export default App;
