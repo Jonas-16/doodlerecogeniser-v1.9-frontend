@@ -1809,7 +1809,7 @@ function App() {
               {/* Info Modal */}
               <InfoModal open={showInfo} onClose={() => setShowInfo(false)} />
               {/* History Modal */}
-              <HistoryModal open={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} username={currentUser} />
+              <HistoryModal open={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} username={username} />
               
               <FooterBar 
                 onAbout={() => setShowInfo(true)}
