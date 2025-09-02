@@ -263,17 +263,9 @@ export default function Login() {
       if (response.ok && data.access_token) {
         // 🔑 use AuthContext
         login(data.access_token);
-      
-      // ✅ Save username locally
-      if (data.username) {
-        localStorage.setItem("username", data.username);
-      }
-
-        // optional: save user info
-        if (data.user) {
-          localStorage.setItem("user", JSON.stringify(data.user));
+        if (data.user_id) {
+          localStorage.setItem("user_id", data.user_id);
         }
-
         navigate("/");
       } else {
         alert(data.detail || "Login failed");

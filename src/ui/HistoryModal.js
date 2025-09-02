@@ -7,13 +7,14 @@ function HistoryModal({ open, onClose, username }) {
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    if (open && username) {
-      fetch(`${Config.BACKEND_URL}/history/${username}`)
-        .then((res) => res.json())
-        .then((data) => setHistory(data))
-        .catch((err) => console.error('Failed to load history:', err));
+    async function fetchHistory() {
+      const userId = localStorage.getItem("user_id");
+      const resp = await fetch(`${Config.BACKEND_URL}/get_history/${userId}`);
+      const data = await resp.json();
+      setHistory(data);
     }
-  }, [open, username]);
+    fetchHistory();
+  }, []);
 
   return (
     <Modal open={open} onClick={onClose}>

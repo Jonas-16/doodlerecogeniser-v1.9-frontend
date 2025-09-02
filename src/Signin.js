@@ -153,7 +153,10 @@ export default function Signin() {
       if (loginRes.ok) {
         const data = await loginRes.json();
         localStorage.setItem("token", data.access_token);
-        login(data.access_token);   // ✅ update global context
+        if (data.user_id) {
+          localStorage.setItem("user_id", data.user_id);
+        }
+        login(data.access_token);
         navigate("/");
       } else {
         setError("Signup succeeded, but auto-login failed");
