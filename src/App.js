@@ -14,7 +14,7 @@ import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import Login from "./Login";
 import Signin from "./Signin";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
 // Centralized backend URL to avoid port mismatches
@@ -36,10 +36,8 @@ const AppContainer = styled.div`
   height: 100vh;
   max-height: 100vh;
   overflow: hidden;
-  background: radial-gradient(1200px 600px at 20% -10%, rgba(99, 102, 241, 0.25), transparent 50%),
-              radial-gradient(1000px 500px at 120% 10%, rgba(244, 114, 182, 0.2), transparent 40%),
-              ${colors.background};
-  color: ${colors.text};
+  background: #0f172a;
+  color: #e2e8f0;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -47,10 +45,10 @@ const AppContainer = styled.div`
   
   /* Allow page scroll on mobile so header/footer can be revealed */
   @media (max-width: 768px) {
-    /* Allow page scroll on mobile */
-    height: auto;
-    max-height: none;
-    overflow: auto;
+    /* Lock to viewport height for immersive drawing */
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
   }
 `;
 
@@ -86,18 +84,16 @@ const SideDoodle = styled.div`
 `;
 
 const Header = styled.div`
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.6), rgba(30, 41, 59, 0.35));
-  backdrop-filter: blur(14px);
-  border-radius: 16px;
-  padding: 10px 12px;
+  background: #1e1b4b;
+  border-radius: 12px;
+  padding: 6px 12px;
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   position: relative;
-  overflow: hidden;
+  height: 48px;
 
   &::before {
     content: "";
@@ -206,9 +202,9 @@ const InfoButton = styled.button`
 const ColorPicker = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 12px 0;
-  padding: 8px;
+  gap: 4px;
+  margin: 6px 0;
+  padding: 4px;
   background: ${colors.surface2};
   border-radius: 8px;
 `;
@@ -216,26 +212,43 @@ const ColorPicker = styled.div`
 const MainContent = styled.div`
   display: flex;
   flex: 1;
-  gap: 6px;
+  gap: 4px;
   min-height: 0;
-  /* Allow natural height so bottom buttons are not clipped */
-  max-height: none;
+  padding: 2px;
+  max-height: calc(100vh - 80px);
   overflow: visible;
 
   & > *:first-child {
-    width: 250px;
+    width: 220px;
     flex-shrink: 0;
     overflow-y: visible;
+    padding: 2px;
+    height: auto !important;
+    max-height: none !important;
+    
+    & > div {
+      margin: 4px 0;
+    }
+    
+    button {
+      padding: 4px 8px;
+      margin: 2px 0;
+      font-size: 0.85rem;
+    }
   }
   
   & > *:last-child {
-    width: 250px;
+    width: 240px;
     flex-shrink: 0;
     overflow-y: auto;
+    padding: 4px;
   }
 
   & > *:nth-child(2) {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -314,12 +327,11 @@ const DarkPanel = styled.div`
 `;
 
 const SectionTitle = styled.h3`
-  margin-bottom: 12px;
-  font-weight: 800;
-  font-size: 0.95rem;
-  letter-spacing: 0.6px;
+  margin: 4px 0;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  margin: 0 0 12px 0;
   background: linear-gradient(90deg, ${colors.accentBlue}, ${colors.accentPurple}, ${colors.accentPink});
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -327,7 +339,7 @@ const SectionTitle = styled.h3`
   -webkit-text-fill-color: transparent;
 `;
 
-const Button = styled.button`
+const StyledButton = styled.button`
   background: ${props => props.primary 
     ? 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #06b6d4 100%)' 
     : 'rgba(255,255,255,0.06)'};
@@ -364,25 +376,15 @@ const Button = styled.button`
 
 const CanvasContainer = styled.div`
   flex: 1;
-  background: ${colors.surface};
-  border-radius: 12px;
-  padding: 20px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  border: 1px solid ${colors.surface2};
-  padding: 16px;
-  box-sizing: border-box;
+  align-items: center;
   position: relative;
-  
-  /* Full-screen canvas on mobile */
-  @media (max-width: 768px) {
-    border-radius: 0;
-    border: none;
-    padding: 0;
-    background: ${colors.background};
-  }
+  min-height: 0;
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid #1e293b;
 `;
 
 const CanvasWrapper = styled.div`
@@ -407,15 +409,17 @@ const CanvasWrapper = styled.div`
 `;
 
 const Canvas = styled.canvas`
-  background: ${colors.surface2};
+  background: #1e293b;
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   cursor: crosshair;
   border: 1px solid ${colors.surface2};
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
   transition: all 0.3s ease;
+  /* Prevent page scroll/zoom while drawing on mobile */
+  touch-action: none;
+  overscroll-behavior: contain;
 
   &:hover {
     border-color: rgba(99, 102, 241, 0.5);
@@ -431,20 +435,22 @@ const Canvas = styled.canvas`
   }
 `;
 
-const ButtonGroup = styled.div`
+const StyledButtonGroup = styled.div`
   display: flex;
-  gap: 16px;
-  margin-top: 16px;
+  gap: 6px;
+  margin: 8px 0;
   width: 100%;
   max-width: ${props => props.maxWidth || '100%'};
   justify-content: center;
-  padding: 0 20px;
-  min-height: 56px;
+  padding: 0 4px;
+  min-height: auto;
 
   & > * {
     flex: 1;
-    max-width: 220px;
-    margin-bottom: 0; /* prevent partial clipping */
+    max-width: 200px;
+    margin: 2px 0;
+    padding: 6px 4px;
+    font-size: 0.85rem;
   }
   
   /* Hide desktop-style action buttons on mobile (we have a sticky bar) */
@@ -540,6 +546,12 @@ const MobileOnly = styled.div`
   @media (max-width: 768px) { display: block; }
 `;
 
+/* Wrapper to show only on desktop */
+const DesktopOnly = styled.div`
+  display: block;
+  @media (max-width: 768px) { display: none; }
+`;
+
 /* Inline actions bar for mobile (below canvas) */
 const MobileActionsBar = styled.div`
   display: none;
@@ -598,27 +610,6 @@ const ModalContent = styled.div`
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.3);
   border: 1px solid rgba(99, 102, 241, 0.2);
 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.3);
-border: 1px solid rgba(99, 102, 241, 0.2);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.3);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.1);
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(99, 102, 241, 0.6);
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: rgba(99, 102, 241, 0.8);
-  }
 `;
 
 const CloseButton = styled.button`
@@ -671,6 +662,32 @@ const FeedbackBox = styled.div`
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 `;
 
+const PredictionResult = styled.div`
+  margin: 8px 0;
+  padding: 8px 12px;
+  background: #2e2a5e;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 3px solid #4f46e5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  position: relative;
+  height: 48px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ff8a00, #e52e71, #0073e6, #00b4ff, #ff8a00);
+    background-size: 200% 100%;
+    animation: ${shiny} 8s linear infinite;
+  }
+`;
+
 function App() {
   // Canvas and drawing state
   const canvasRef = useRef(null);
@@ -698,6 +715,7 @@ function App() {
   const [canvasSize, setCanvasSize] = useState(getCanvasSize());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isLoggedIn, logout } = useContext(AuthContext);
+  const [undoStack, setUndoStack] = useState([]);
   // Remove responsive canvas size handler since canvas size is now fixed
   // useEffect(() => {
   //   const handleResize = () => {
@@ -739,6 +757,15 @@ function App() {
   useEffect(() => {
     resetCanvasAndFeedback();
   }, []);
+
+  // Show About (Info) modal when reaching the home page ("/")
+  const location = useLocation();
+  useEffect(() => {
+    if (location.pathname === "/" && isLoggedIn) {
+      const t = setTimeout(() => setShowInfo(true), 250);
+      return () => clearTimeout(t);
+    }
+  }, [location.pathname, isLoggedIn]);
 
   // Generate AI image via Stability AI and download it
   const handleEnhance = async () => {
@@ -929,15 +956,29 @@ function App() {
   };
 
   const handlePointerDown = (e) => {
+    e.preventDefault();
+    // Save current canvas state for undo
+    try {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      const snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      setUndoStack(prev => {
+        const next = [...prev, snapshot];
+        return next.length > 20 ? next.slice(next.length - 20) : next;
+      });
+    } catch (_) { /* ignore */ }
     setDrawing(true);
     const pos = getPointerPos(e);
     const ctx = canvasRef.current.getContext('2d');
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
+    // Ensure we keep receiving move events even if pointer leaves element
+    try { canvasRef.current.setPointerCapture && canvasRef.current.setPointerCapture(e.pointerId); } catch (_) {}
   };
 
   const handlePointerMove = (e) => {
     if (!drawing) return;
+    e.preventDefault();
     const pos = getPointerPos(e);
     const ctx = canvasRef.current.getContext('2d');
     ctx.lineWidth = strokeWidth;
@@ -948,17 +989,38 @@ function App() {
     ctx.stroke();
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e) => {
     setDrawing(false);
+    try { canvasRef.current.releasePointerCapture && canvasRef.current.releasePointerCapture(e.pointerId); } catch (_) {}
   };
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+    // Save state before clearing for undo
+    try {
+      const snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      setUndoStack(prev => {
+        const next = [...prev, snapshot];
+        return next.length > 20 ? next.slice(next.length - 20) : next;
+      });
+    } catch (_) { /* ignore */ }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+  };
+
+  const handleUndo = () => {
+    if (!canvasRef.current) return;
+    setUndoStack(prev => {
+      if (prev.length === 0) return prev;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      const last = prev[prev.length - 1];
+      try { ctx.putImageData(last, 0, 0); } catch (_) {}
+      return prev.slice(0, -1);
+    });
   };
 
   const getImageData = () => {
@@ -1249,25 +1311,27 @@ function App() {
                   <HamburgerButton aria-label="Open menu" onClick={() => setMobileMenuOpen(true)}>☰</HamburgerButton>
                   <InfoButton onClick={() => setShowInfo(true)} />
 
-                  {isLoggedIn && (
-                    <button
-                      onClick={() => {
-                        logout(); // clears token + state
-                        window.location.href = "/login";  // force redirect
-                      }}
-                      style={{
-                        padding: "6px 12px",
-                        borderRadius: "6px",
-                        backgroundColor: "#ef4444",
-                        color: "#fff",
-                        fontSize: "0.85rem",
-                        fontWeight: "600",
-                        cursor: "pointer"
-                      }}
-                    >
-                      Logout
-                    </button>
-                  )}
+                  <DesktopOnly>
+                    {isLoggedIn && (
+                      <button
+                        onClick={() => {
+                          logout(); // clears token + state
+                          window.location.href = "/login";  // force redirect
+                        }}
+                        style={{
+                          padding: "6px 12px",
+                          borderRadius: "6px",
+                          backgroundColor: "#ef4444",
+                          color: "#fff",
+                          fontSize: "0.85rem",
+                          fontWeight: "600",
+                          cursor: "pointer"
+                        }}
+                      >
+                        Logout
+                      </button>
+                    )}
+                  </DesktopOnly>
                 </div>
 
               </Header>
@@ -1280,12 +1344,6 @@ function App() {
                         <CloseButton onClick={() => setMobileMenuOpen(false)} />
                       </MobileMenuHeader>
 
-                      <SectionTitle>Brush Size</SectionTitle>
-                      <ButtonGroup style={{ marginTop: 8 }}>
-                        <Button onClick={() => setStrokeWidth(Math.max(1, strokeWidth - 2))}>-</Button>
-                        <div style={{ alignSelf: 'center', color: '#a5b4fc', minWidth: 56, textAlign: 'center' }}>{strokeWidth}px</div>
-                        <Button onClick={() => setStrokeWidth(Math.min(100, strokeWidth + 2))}>+</Button>
-                      </ButtonGroup>
 
                       <SectionTitle>Brush Color</SectionTitle>
                       <ColorPicker>
@@ -1306,8 +1364,24 @@ function App() {
                       </ColorPicker>
 
                       <SectionTitle>Downloads</SectionTitle>
-                      <Button fullWidth onClick={downloadUserDrawing}>💾 Save Original</Button>
-                      <Button fullWidth onClick={downloadProcessedImage}>📥 Save Processed</Button>
+                      <StyledButton fullWidth onClick={downloadUserDrawing}>💾 Save Original</StyledButton>
+                      <StyledButton fullWidth onClick={downloadProcessedImage}>📥 Save Processed</StyledButton>
+                      {isLoggedIn && (
+                        <div style={{ marginTop: 12 }}>
+                          <SectionTitle>Account</SectionTitle>
+                          <StyledButton
+                            fullWidth
+                            onClick={() => {
+                              logout();
+                              setMobileMenuOpen(false);
+                              window.location.href = "/login";
+                            }}
+                            style={{ background: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#fecaca' }}
+                          >
+                            Logout
+                          </StyledButton>
+                        </div>
+                      )}
                     </MobileMenuContent>
                   </MobileMenuOverlay>
                 )}
@@ -1355,7 +1429,7 @@ function App() {
                           padding: '6px',
                           border: '1px solid rgba(99, 102, 241, 0.2)'
                         }}>
-                          <Button
+                          <StyledButton
                             onClick={() => setStrokeWidth(Math.max(1, strokeWidth - 2))}
                             style={{ 
                               minWidth: '30px', 
@@ -1365,7 +1439,7 @@ function App() {
                               minHeight: '30px',
                               margin: 0
                             }}
-                          >-</Button>
+                          >-</StyledButton>
                           <div style={{ 
                             background: 'rgba(99, 102, 241, 0.15)',
                             borderRadius: '4px',
@@ -1382,7 +1456,7 @@ function App() {
                               {strokeWidth}px
                             </span>
                           </div>
-                          <Button
+                          <StyledButton
                             onClick={() => setStrokeWidth(Math.min(100, strokeWidth + 2))}
                             style={{ 
                               minWidth: '30px', 
@@ -1392,10 +1466,10 @@ function App() {
                               minHeight: '30px',
                               margin: 0
                             }}
-                          >+</Button>
+                          >+</StyledButton>
                         </div>
 
-                        <Button
+                        <StyledButton
                           fullWidth
                           onClick={() => setIsErasing(!isErasing)}
                           style={{ 
@@ -1413,7 +1487,7 @@ function App() {
                           }}
                         >
                           {isErasing ? '🧹 Eraser' : '✏️ Pencil'}
-                        </Button>
+                        </StyledButton>
 
                         <div style={{ marginBottom: '16px' }}>
                           <p style={{ 
@@ -1444,7 +1518,7 @@ function App() {
                           </div>
                         </div>
                         
-                        <Button
+                        <StyledButton
                           fullWidth
                           onClick={resetCanvasAndFeedback}
                           style={{
@@ -1458,7 +1532,7 @@ function App() {
                           }}
                         >
                           🗑️ Clear Canvas
-                        </Button>
+                        </StyledButton>
                       </div>
                     </DarkPanel>
 
@@ -1485,7 +1559,7 @@ function App() {
                         ACTIONS
                       </h3>
                       
-                      <Button
+                      <StyledButton
                         fullWidth
                         primary
                         onClick={handleEnhance}
@@ -1493,9 +1567,9 @@ function App() {
                         style={{ textTransform: 'none', fontSize: '0.75rem' }}
                       >
                         {isEnhancing ? '⏳ Generating...' : '🎨 Generate AI Image'}
-                      </Button>
+                      </StyledButton>
 
-                      <Button
+                      <StyledButton
                         fullWidth
                         onClick={downloadUserDrawing}
                         style={{ 
@@ -1517,9 +1591,9 @@ function App() {
                         }}
                       >
                         💾 Save Drawing
-                      </Button>
+                      </StyledButton>
 
-                      <Button
+                      <StyledButton
                         fullWidth
                         onClick={downloadProcessedImage}
                         style={{ 
@@ -1540,7 +1614,7 @@ function App() {
                         }}
                       >
                         📥 Save Processed
-                      </Button>
+                      </StyledButton>
                     </div>
                   </Panel>
                   
@@ -1556,6 +1630,8 @@ function App() {
                           onPointerMove={handlePointerMove}
                           onPointerUp={handlePointerUp}
                           onPointerLeave={handlePointerUp}
+                          onPointerCancel={handlePointerUp}
+                          onContextMenu={(e) => e.preventDefault()}
                           style={{
                             width: `${canvasSize.width}px`,
                             height: `${canvasSize.height}px`,
@@ -1565,7 +1641,7 @@ function App() {
                       {/* Mobile-only action buttons below the canvas */}
                       <MobileOnly>
                         <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                          <Button
+                          <StyledButton
                             primary
                             onClick={handlePredict}
                             disabled={loading}
@@ -1573,22 +1649,22 @@ function App() {
                             style={{ textTransform: 'none', fontSize: '0.9rem' }}
                           >
                             {loading ? 'Predicting…' : 'Predict Doodle'}
-                          </Button>
-                          <Button
+                          </StyledButton>
+                          <StyledButton
                             onClick={handleEnhance}
                             disabled={isEnhancing}
                             fullWidth
                             style={{ textTransform: 'none', fontSize: '0.9rem' }}
                           >
                             {isEnhancing ? 'Generating…' : 'Generate AI'}
-                          </Button>
-                          <Button
+                          </StyledButton>
+                          <StyledButton
                             onClick={clearCanvas}
                             fullWidth
                             style={{ textTransform: 'none', fontSize: '0.9rem' }}
                           >
                             Clear Canvas
-                          </Button>
+                          </StyledButton>
                         </div>
                       </MobileOnly>
                       {/* Mobile-only prediction box below canvas */}
@@ -1638,8 +1714,24 @@ function App() {
                         </MobilePredictionBox>
                       </MobileOnly>
 
-                      <ButtonGroup maxWidth={canvasSize.width + 'px'}>
-                        <Button
+                      <StyledButtonGroup maxWidth={canvasSize.width + 'px'}>
+                        <StyledButton
+                          onClick={handleUndo}
+                          fullWidth
+                          style={{
+                            color: '#e2e8f0',
+                            borderColor: '#4b5563',
+                            padding: '12px',
+                            fontSize: '1rem',
+                            fontWeight: '500',
+                            textTransform: 'none',
+                            borderRadius: '8px'
+                          }}
+                          disabled={undoStack.length === 0}
+                        >
+                          Undo
+                        </StyledButton>
+                        <StyledButton
                           primary
                           onClick={handlePredict}
                           disabled={loading}
@@ -1653,8 +1745,8 @@ function App() {
                           }}
                         >
                           {loading ? 'Predicting...' : 'Predict Doodle'}
-                        </Button>
-                        <Button
+                        </StyledButton>
+                        <StyledButton
                           onClick={handleEnhance}
                           disabled={isEnhancing}
                           fullWidth
@@ -1669,8 +1761,8 @@ function App() {
                           }}
                         >
                           {isEnhancing ? 'Generating...' : 'Generate with AI'}
-                        </Button>
-                      </ButtonGroup>
+                        </StyledButton>
+                      </StyledButtonGroup>
                     </CanvasWrapper>
                   </CanvasContainer>
                   

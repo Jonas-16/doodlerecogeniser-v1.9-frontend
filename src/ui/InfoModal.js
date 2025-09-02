@@ -134,6 +134,26 @@ function InfoModal({ open, onClose }) {
             Draw something on the canvas and click <strong>"Predict Doodle"</strong> to see the magic happen!
           </p>
         </div>
+
+        {/* Start Drawing CTA */}
+        <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+              color: '#ffffff',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: '9999px',
+              padding: '12px 20px',
+              fontSize: '0.95rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 8px 20px rgba(22, 163, 74, 0.35)'
+            }}
+          >
+            Start Drawing
+          </button>
+        </div>
       </ModalContent>
     </Modal>
   );
