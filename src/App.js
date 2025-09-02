@@ -8,6 +8,7 @@ import PredictionResults from './ui/PredictionResults';
 import AIAnalysisPanel from './ui/AIAnalysisPanel';
 import InfoModal from './ui/InfoModal';
 import TermsModal from './ui/TermsModal';
+import HistoryModal from './ui/HistoryModal';
 import FooterBar from './ui/FooterBar';
 import { appShiny as shiny, appPulse as pulse, AppGlowingText as GlowingText, AppShinyText as ShinyText } from './ui/Styled';
 import { useContext } from "react";
@@ -1792,6 +1793,8 @@ function App() {
 
               {/* Info Modal */}
               <InfoModal open={showInfo} onClose={() => setShowInfo(false)} />
+              {/* History Modal */}
+              <HistoryModal open={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} username={currentUser} />
               
               <FooterBar 
                 onAbout={() => setShowInfo(true)}
