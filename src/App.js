@@ -711,11 +711,12 @@ function App() {
   const [isErasing, setIsErasing] = useState(false); // new state for eraser
   const [isEnhancing, setIsEnhancing] = useState(false); // Loading state for enhance button
   const [showInfo, setShowInfo] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [strokeWidth, setStrokeWidth] = useState(36); // Increased default brush size to 36
   const [brushColor, setBrushColor] = useState(DEFAULT_STROKE_COLOR);
   const [canvasSize, setCanvasSize] = useState(getCanvasSize());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { isLoggedIn, logout, username } = useContext(AuthContext);
   const [undoStack, setUndoStack] = useState([]);
   // Remove responsive canvas size handler since canvas size is now fixed
   // useEffect(() => {
@@ -1311,6 +1312,20 @@ function App() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <HamburgerButton aria-label="Open menu" onClick={() => setMobileMenuOpen(true)}>☰</HamburgerButton>
                   <InfoButton onClick={() => setShowInfo(true)} />
+                  <button
+                    onClick={() => setIsHistoryOpen(true)}
+                    style={{
+                      padding: "6px 12px",
+                      borderRadius: "6px",
+                      backgroundColor: "#3b82f6",
+                      color: "#fff",
+                      fontSize: "0.85rem",
+                      fontWeight: "600",
+                      cursor: "pointer"
+                    }}
+                  >
+                    History
+                  </button>
 
                   <DesktopOnly>
                     {isLoggedIn && (
