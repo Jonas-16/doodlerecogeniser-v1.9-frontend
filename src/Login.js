@@ -263,6 +263,11 @@ export default function Login() {
       if (response.ok && data.access_token) {
         // 🔑 use AuthContext
         login(data.access_token);
+      
+      // ✅ Save username locally
+      if (data.username) {
+        localStorage.setItem("username", data.username);
+      }
 
         // optional: save user info
         if (data.user) {
@@ -323,7 +328,10 @@ export default function Login() {
           {/* Continue with Google removed */}
           <SecondaryButton
             fullWidth
-            onClick={() => { login('guest'); navigate('/'); }}
+            onClick={() => {
+              localStorage.setItem("username", "Guest");
+              navigate("/");
+            }}
           >
             Skip for now
           </SecondaryButton>

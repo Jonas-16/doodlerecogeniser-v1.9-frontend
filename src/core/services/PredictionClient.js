@@ -2,17 +2,20 @@ import Config from '../config/Config';
 
 export class PredictionClient {
   static async predict(imageData) {
+    // Get username (or user_id) from localStorage after login
+    const username = localStorage.getItem('username');
+
+    const payload = {
+      ...imageData,   // your existing pixels
+      username: username, // attach logged-in user
+    };
     const resp = await fetch(`${Config.BACKEND_URL}/predict`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(imageData),
+      body: JSON.stringify(payload),
     });
     if (!resp.ok) {
       let errMsg = 'Prediction failed';
-      try {
-        const err = await resp.json().catch(() => ({}));
-        if (err && (err.detail || err.message)) errMsg = err.detail || err.message;
-      } catch {}
       throw new Error(errMsg);
     }
     return resp.json();
