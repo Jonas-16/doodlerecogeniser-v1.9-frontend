@@ -1261,6 +1261,30 @@ function App() {
     }
   };
 
+  // Save prediction to backend
+  const savePrediction = async () => {
+    if (!prediction) return;
+    try {
+      const userId = localStorage.getItem("user_id");
+      const predictedClass = prediction.label; // or whatever your prediction response uses
+
+      await fetch(`${BACKEND_URL}/save_prediction`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, predicted_class: predictedClass })
+      });
+    } catch (err) {
+      console.error("Error saving prediction:", err);
+    }
+  };
+
+  // Call savePrediction after prediction is updated
+  useEffect(() => {
+    if (prediction) {
+      savePrediction();
+    }
+  }, [prediction]);
+
   return (
     <Routes>
       <Route
