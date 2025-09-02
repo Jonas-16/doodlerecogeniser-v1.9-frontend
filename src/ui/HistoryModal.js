@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, ModalContent, CloseButton } from './Styled';
 import colors from '../constants/colors';
-import Config from '../config/Config';
+import Config from './core/config/Config';
 
 function HistoryModal({ open, onClose, username }) {
   const [history, setHistory] = useState([]);
