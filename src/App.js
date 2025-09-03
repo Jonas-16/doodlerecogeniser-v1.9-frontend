@@ -1263,18 +1263,20 @@ function App() {
 
   // Save prediction to backend
   const savePrediction = async () => {
-    if (!prediction) return;
-    try {
-      const user_id = localStorage.getItem("user_id");
-      const predicted_class = prediction; // prediction is your predicted label
+    const user_id = localStorage.getItem('user_id'); // or from context
+    const predicted_class = prediction; // assuming prediction is the label
+    if (!user_id || !predicted_class) return;
 
-      await fetch(`${BACKEND_URL}/save_prediction`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id, predicted_class })
+    try {
+      const response = await fetch(`${BACKEND_URL}/save_prediction`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id, predicted_class }),
       });
+      const data = await response.json();
+      // handle success or error
     } catch (err) {
-      console.error("Error saving prediction:", err);
+      // handle error
     }
   };
 
