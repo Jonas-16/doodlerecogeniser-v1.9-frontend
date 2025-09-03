@@ -115,6 +115,7 @@ const HistoryModal = ({ open, onClose, username }) => {
           ) : (
             <p>No history available yet. Start drawing to see your history here!</p>
           )}
+
         </HistoryList>
       </ModalContent>
     </ModalOverlay>
