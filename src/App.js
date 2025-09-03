@@ -1265,8 +1265,8 @@ function App() {
   const savePrediction = async () => {
     if (!prediction) return;
     try {
-      const userId = localStorage.getItem("user_id");
-      const predictedClass = prediction.label; // or whatever your prediction response uses
+      const user_id = localStorage.getItem("user_id");
+      const predicted_class = prediction; // prediction is your predicted label
 
       await fetch(`${BACKEND_URL}/save_prediction`, {
         method: "POST",
