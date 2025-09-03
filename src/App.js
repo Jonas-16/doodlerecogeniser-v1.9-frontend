@@ -49,7 +49,7 @@ const AppContainer = styled.div`
     /* Lock to viewport height for immersive drawing */
     height: 100vh;
     max-height: 100vh;
-    overflow: hidden;
+    overflow: auto;
   }
 `;
 
@@ -189,6 +189,23 @@ const InfoButton = styled.button`
   transition: all 0.3s ease;
   animation: ${pulse} 2s infinite;
 
+  /* Ensure the info button always fits in header on mobile */
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    border-radius: 8px;
+    flex: 0 0 auto; /* prevent shrinking to 0 */
+  }
+
+  /* Extra small devices */
+  @media (max-width: 360px) {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    border-radius: 6px;
+  }
+
   &:hover {
     background: rgba(99, 102, 241, 0.4);
     box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
@@ -197,6 +214,7 @@ const InfoButton = styled.button`
   &::before {
     content: "ℹ️";
     font-size: 16px;
+    @media (max-width: 360px) { font-size: 14px; }
   }
 `;
 
@@ -468,6 +486,13 @@ const CanvasFrame = styled.div`
   background: transparent;
   border: none;
 
+  /* Keep canvas in view on mobile while allowing page to scroll */
+  @media (max-width: 768px) {
+    position: sticky;
+    top: 8px; /* stay below header */
+    z-index: 5;
+  }
+
   @media (max-width: 768px) {
     padding: 12px;
     border-radius: 18px;
@@ -699,7 +724,9 @@ function App() {
   const [genAiPrediction, setGenAiPrediction] = useState("");
   const [genAiLoading, setGenAiLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('privacy'); // 'privacy' or 'terms'
   // Gamified UI state (UI-only; does not affect app logic)
   const [streak, setStreak] = useState(0);
@@ -710,8 +737,6 @@ function App() {
   const [aiImage, setAiImage] = useState(""); // base64 or URL for AI image
   const [isErasing, setIsErasing] = useState(false); // new state for eraser
   const [isEnhancing, setIsEnhancing] = useState(false); // Loading state for enhance button
-  const [showInfo, setShowInfo] = useState(false);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [strokeWidth, setStrokeWidth] = useState(36); // Increased default brush size to 36
   const [brushColor, setBrushColor] = useState(DEFAULT_STROKE_COLOR);
   const [canvasSize, setCanvasSize] = useState(getCanvasSize());
@@ -802,13 +827,9 @@ function App() {
         // Try to extract detailed error from backend
         let errDetail = '';
         try {
-          const errJson = await resp.json();
+          const errJson = await resp.json().catch(() => ({}));
           errDetail = errJson?.detail || errJson?.message || JSON.stringify(errJson);
-        } catch (_) {
-          try {
-            errDetail = await resp.text();
-          } catch (_) { /* ignore */ }
-        }
+        } catch {}
         throw new Error(errDetail || `Request failed (${resp.status})`);
       }
 
@@ -1261,32 +1282,6 @@ function App() {
     }
   };
 
-  // Save prediction to backend
-  const savePrediction = async () => {
-    const user_id = localStorage.getItem('user_id'); // or from context
-    const predicted_class = prediction; // assuming prediction is the label
-    if (!user_id || !predicted_class) return;
-
-    try {
-      const response = await fetch(`${BACKEND_URL}/save_prediction`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id, predicted_class }),
-      });
-      const data = await response.json();
-      // handle success or error
-    } catch (err) {
-      // handle error
-    }
-  };
-
-  // Call savePrediction after prediction is updated
-  useEffect(() => {
-    if (prediction) {
-      savePrediction();
-    }
-  }, [prediction]);
-
   return (
     <Routes>
       <Route
@@ -1337,23 +1332,23 @@ function App() {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <HamburgerButton aria-label="Open menu" onClick={() => setMobileMenuOpen(true)}>☰</HamburgerButton>
-                  <InfoButton onClick={() => setShowInfo(true)} />
-                  <button
-                    onClick={() => setIsHistoryOpen(true)}
-                    style={{
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      backgroundColor: "#3b82f6",
-                      color: "#fff",
-                      fontSize: "0.85rem",
-                      fontWeight: "600",
-                      cursor: "pointer"
-                    }}
-                  >
-                    History
-                  </button>
+                    <InfoButton onClick={() => setShowInfo(true)} />
 
                   <DesktopOnly>
+                    <button
+                      onClick={() => setIsHistoryOpen(true)}
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: "6px",
+                        backgroundColor: "#3b82f6",
+                        color: "#fff",
+                        fontSize: "0.85rem",
+                        fontWeight: "600",
+                        cursor: "pointer"
+                      }}
+                    >
+                      History
+                    </button>
                     {isLoggedIn && (
                       <button
                         onClick={() => {
@@ -1389,12 +1384,12 @@ function App() {
 
                       <SectionTitle>Brush Color</SectionTitle>
                       <ColorPicker>
-                        {['#000000','#ff0000','#00ff00','#0000ff','#ffffff','#ffa500','#800080','#00ffff'].map((c) => (
+                        {['#000000', '#dc2626', '#2563eb', '#10b981', '#f59e0b', '#8b5cf6'].map((color) => (
                           <button
-                            key={c}
-                            onClick={() => setBrushColor(c)}
-                            style={{ width: 24, height: 24, borderRadius: 6, border: c === brushColor ? '2px solid #fff' : '1px solid #555', background: c, cursor: 'pointer' }}
-                            aria-label={`Set color ${c}`}
+                            key={color}
+                            onClick={() => setBrushColor(color)}
+                            style={{ width: 24, height: 24, borderRadius: 6, border: color === brushColor ? '2px solid white' : '1px solid #555', background: color, cursor: 'pointer' }}
+                            aria-label={`Set color ${color}`}
                           />
                         ))}
                         <button
@@ -1408,6 +1403,21 @@ function App() {
                       <SectionTitle>Downloads</SectionTitle>
                       <StyledButton fullWidth onClick={downloadUserDrawing}>💾 Save Original</StyledButton>
                       <StyledButton fullWidth onClick={downloadProcessedImage}>📥 Save Processed</StyledButton>
+
+                      <div style={{ marginTop: 12 }}>
+                        <SectionTitle>History</SectionTitle>
+                        <StyledButton 
+                          fullWidth 
+                          onClick={() => {
+                            setIsHistoryOpen(true);
+                            setMobileMenuOpen(false);
+                          }}
+                          style={{ marginBottom: '12px' }}
+                        >
+                          View History
+                        </StyledButton>
+                      </div>
+
                       {isLoggedIn && (
                         <div style={{ marginTop: 12 }}>
                           <SectionTitle>Account</SectionTitle>
@@ -1698,7 +1708,14 @@ function App() {
                             fullWidth
                             style={{ textTransform: 'none', fontSize: '0.9rem' }}
                           >
-                            {isEnhancing ? 'Generating…' : 'Generate AI'}
+                            {isEnhancing ? 'Generating…' : 'Generate with AI'}
+                          </StyledButton>
+                          <StyledButton
+                            onClick={handleUndo}
+                            fullWidth
+                            style={{ textTransform: 'none', fontSize: '0.9rem' }}
+                          >
+                            Undo
                           </StyledButton>
                           <StyledButton
                             onClick={clearCanvas}
@@ -1832,23 +1849,25 @@ function App() {
                 )}
               </MainContainer>
 
-              {/* Info Modal */}
+              {/* Modals */}
               <InfoModal open={showInfo} onClose={() => setShowInfo(false)} />
-              {/* History Modal */}
-              <HistoryModal open={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} username={username} />
-              
-              <FooterBar 
-                onAbout={() => setShowInfo(true)}
-                onPrivacy={() => { setActiveTab('privacy'); setShowTerms(true); }}
-                onTerms={() => { setActiveTab('terms'); setShowTerms(true); }}
-              />
-
-              {/* Terms and Privacy Modal */}
               <TermsModal 
                 open={showTerms}
                 onClose={() => setShowTerms(false)}
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
+              />
+              <HistoryModal 
+                open={isHistoryOpen} 
+                onClose={() => setIsHistoryOpen(false)} 
+                username={isLoggedIn ? username : null} 
+              />
+
+              {/* Footer */}
+              <FooterBar
+                onAbout={() => setShowInfo(true)}
+                onPrivacy={() => { setActiveTab('privacy'); setShowTerms(true); }}
+                onTerms={() => { setActiveTab('terms'); setShowTerms(true); }}
               />
             </AppContainer>
           </ProtectedRoute>
