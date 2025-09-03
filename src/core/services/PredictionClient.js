@@ -4,13 +4,17 @@ export class PredictionClient {
   static async predict(imageData) {
     const token = localStorage.getItem("access_token");
 
+    if (!token) {
+      throw new Error("No token found. Please log in again.");
+    }
+
     const resp = await fetch(`${Config.BACKEND_URL}/predict`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`   // 🔑 add JWT
+        "Authorization": `Bearer ${token}`,  // 👈 add token here
       },
-      body: JSON.stringify(imageData),  // no need to attach username
+      body: JSON.stringify(imageData),
     });
 
     if (!resp.ok) {
