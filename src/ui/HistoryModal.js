@@ -72,12 +72,26 @@ const HistoryItem = styled.div`
 const HistoryModal = ({ open, onClose, username }) => {
   if (!open) return null;
 
-  // TODO: Replace with actual history data fetching
-  const historyItems = [
-    { id: 1, label: 'Cat', confidence: 0.92, timestamp: '2023-05-15 14:30' },
-    { id: 2, label: 'Dog', confidence: 0.85, timestamp: '2023-05-15 13:45' },
-    { id: 3, label: 'House', confidence: 0.78, timestamp: '2023-05-15 12:20' },
-  ];
+  useEffect(() => {
+    if (!open) return;
+
+    async function fetchHistory() {
+      try {
+        const userId = localStorage.getItem("user_id");
+        if (!userId) return;
+
+        const resp = await fetch(`${Config.BACKEND_URL}/get_history/${userId}`);
+        const data = await resp.json();
+        setHistory(data);
+      } catch (err) {
+        console.error("Failed to fetch history:", err);
+      }
+    }
+
+    fetchHistory();
+  }, [open]);
+
+  if (!open) return null;
 
   return (
     <ModalOverlay onClick={onClose}>
