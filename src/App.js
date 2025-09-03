@@ -1271,7 +1271,7 @@ function App() {
       await fetch(`${BACKEND_URL}/save_prediction`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, predicted_class: predictedClass })
+        body: JSON.stringify({ user_id, predicted_class })
       });
     } catch (err) {
       console.error("Error saving prediction:", err);
