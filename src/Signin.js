@@ -125,42 +125,28 @@ export default function Signin() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSignin = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/signup`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
-
+      const data = await response.json();
       if (!response.ok) {
-        const err = await response.json();
-        setError(err.detail || "Signup failed");
+        setError(data.detail || "Signup failed");
         return;
       }
-
-      // after signup, automatically login
-      const loginRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, { 
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (loginRes.ok) {
-        const data = await loginRes.json();
-        localStorage.setItem("token", data.access_token);
-        if (data.user_id) {
-          localStorage.setItem("user_id", data.user_id);
-        }
-        login(data.access_token);
-        navigate("/");
-      } else {
-        setError("Signup succeeded, but auto-login failed");
+      login(data.token);
+      if (data.user_id) {
+        localStorage.setItem("user_id", data.user_id);
       }
+      localStorage.setItem("username", username);
+      navigate("/");
     } catch (err) {
       setError("Server error, try again later");
     }
@@ -202,10 +188,10 @@ export default function Signin() {
       <Title>Create Account</Title>
       <FormBox>
         <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <Input
           type="password"

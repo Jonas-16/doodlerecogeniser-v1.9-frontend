@@ -244,35 +244,31 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ username, password })
       });
-
       const data = await response.json();
-
-      if (response.ok && data.access_token) {
-        // 🔑 use AuthContext
-        login(data.access_token);
+      if (response.ok && data.token) {
+        login(data.token);
         if (data.user_id) {
           localStorage.setItem("user_id", data.user_id);
         }
+        localStorage.setItem("username", username);
         navigate("/");
       } else {
-        alert(data.detail || "Login failed");
+        setError(data.detail || "Login failed");
       }
     } catch (error) {
-      console.error("Login error:", error);
-      alert("Something went wrong. Try again.");
+      setError("Something went wrong. Try again.");
     }
   };
 
@@ -289,13 +285,14 @@ export default function Login() {
 
         <InputGroup>
           <FieldWrapper>
-            <InputIcon>✉️</InputIcon>
+            <InputIcon>👤</InputIcon>
             <StyledInput
-              type="email"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              aria-label="Email"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              aria-label="Username"
+              required
             />
           </FieldWrapper>
           <FieldWrapper>
@@ -306,18 +303,16 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               aria-label="Password"
+              required
             />
           </FieldWrapper>
         </InputGroup>
 
         {error && <ErrorText>{error}</ErrorText>}
 
-        {/* Forgot Password removed */}
-
         <Actions>
           <PrimaryButton fullWidth onClick={handleLogin}>Login</PrimaryButton>
           <SecondaryButton fullWidth onClick={() => navigate('/signin')}>Sign Up</SecondaryButton>
-          {/* Continue with Google removed */}
           <SecondaryButton
             fullWidth
             onClick={() => {
