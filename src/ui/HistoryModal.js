@@ -105,11 +105,11 @@ const HistoryModal = ({ open, onClose, username }) => {
         
         <HistoryList>
           {history.length > 0 ? (
-            history.map((item) => (
-              <HistoryItem key={item.id}>
-                <div><strong>Label:</strong> {item.label}</div>
+            history.map((item, idx) => (
+              <HistoryItem key={idx}>
+                <div><strong>Label:</strong> {item.predicted_class}</div>
                 <div><strong>Confidence:</strong> {(item.confidence * 100).toFixed(1)}%</div>
-                <div><small>{item.timestamp}</small></div>
+                <div><small>{new Date(item.created_at).toLocaleString()}</small></div>
               </HistoryItem>
             ))
           ) : (
