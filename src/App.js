@@ -1173,17 +1173,22 @@ function App() {
         return;
       }
 
-      // Speak that we're processing (optional UI feedback only for model prediction)
       announcePrediction("Analyzing your drawing...");
+
+      // 🔑 get token from localStorage
+      const token = localStorage.getItem("access_token");
 
       const response = await fetch(`${BACKEND_URL}/predict`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`   // ✅ send token
+        },
         body: JSON.stringify(imageData),
       });
 
       if (!response.ok) {
-        let errMsg = 'Prediction failed';
+        let errMsg = "Prediction failed";
         try {
           const err = await response.json().catch(() => ({}));
           if (err && (err.detail || err.message)) {
@@ -1208,14 +1213,12 @@ function App() {
         return;
       }
 
-      // Update the UI with prediction results
+      // Update UI with prediction results
       setPrediction(result.label);
       setPredictionConfidence(result.confidence);
-      // UI-only gamification counters
       setStreak((prev) => prev + 1);
       setXp((prev) => prev + 10);
 
-      // Process top predictions if available
       let predictions = [];
       if (result.top_predictions && result.top_predictions.length > 0) {
         predictions = result.top_predictions;
@@ -1223,12 +1226,10 @@ function App() {
         predictions = [{ class: result.label, confidence: result.confidence }];
       }
       setTopPredictions(predictions);
-      // Do not trigger or set AI analysis here; keep AI analysis independent
+
       const confPct = Math.round((result.confidence || 0) * 100);
       announcePrediction(`I think it's ${result.label}. Confidence ${confPct} percent.`);
-
-      // Automatically trigger AI analysis after model prediction completes
-      // This keeps AI analysis logically independent but improves UX by auto-running it.
+   
       handleGenAiPredict();
     } catch (err) {
       console.error("Prediction error:", err);
