@@ -71,10 +71,10 @@ const HistoryItem = styled.div`
 `;
 
 const HistoryModal = ({ open, onClose, username }) => {
-  if (!open) return null;
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) return; // ✅ safe because effect still always runs
 
     async function fetchHistory() {
       try {
@@ -82,8 +82,10 @@ const HistoryModal = ({ open, onClose, username }) => {
         if (!userId) return;
 
         const resp = await fetch(`${Config.BACKEND_URL}/get_history/${userId}`);
-        const data = await resp.json();
-        setHistory(data);
+        if (resp.ok) {
+          const data = await resp.json();
+          setHistory(data);
+        }
       } catch (err) {
         console.error("Failed to fetch history:", err);
       }
@@ -102,8 +104,8 @@ const HistoryModal = ({ open, onClose, username }) => {
         {username && <p>Viewing history for: {username}</p>}
         
         <HistoryList>
-          {historyItems.length > 0 ? (
-            historyItems.map((item) => (
+          {history.length > 0 ? (
+            history.map((item) => (
               <HistoryItem key={item.id}>
                 <div><strong>Label:</strong> {item.label}</div>
                 <div><strong>Confidence:</strong> {(item.confidence * 100).toFixed(1)}%</div>
