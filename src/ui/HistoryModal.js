@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import Config from '../core/config/Config';
 
 const ModalOverlay = styled.div`
   position: fixed;
