@@ -257,12 +257,13 @@ export default function Login() {
         body: JSON.stringify({ username, password })
       });
       const data = await response.json();
-      if (response.ok && data.token) {
-        login(data.token);
+
+      if (response.ok && data.access_token) {
+        login(data.access_token);   // ✅ use access_token now
         if (data.user_id) {
           localStorage.setItem("user_id", data.user_id);
         }
-        localStorage.setItem("username", username);
+        localStorage.setItem("username", data.username);
         navigate("/");
       } else {
         setError(data.detail || "Login failed");
@@ -271,6 +272,7 @@ export default function Login() {
       setError("Something went wrong. Try again.");
     }
   };
+
 
   return (
     <LoginContainer>
