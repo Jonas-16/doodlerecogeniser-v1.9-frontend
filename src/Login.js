@@ -251,19 +251,32 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        }
+      );
+
       const data = await response.json();
 
       if (response.ok && data.access_token) {
-        login(data.access_token);   // ✅ use access_token now
+        // ✅ Save JWT into localStorage
+        localStorage.setItem("access_token", data.access_token);
+
+        // Update context
+        login(data.access_token);
+
         if (data.user_id) {
           localStorage.setItem("user_id", data.user_id);
         }
+
+        // Save username for later use
         localStorage.setItem("username", data.username);
+
+        // Redirect to homepage
         navigate("/");
       } else {
         setError(data.detail || "Login failed");
