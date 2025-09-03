@@ -137,15 +137,21 @@ export default function Signin() {
         body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
+
       if (!response.ok) {
         setError(data.detail || "Signup failed");
         return;
       }
-      login(data.token);
-      if (data.user_id) {
-        localStorage.setItem("user_id", data.user_id);
-      }
-      localStorage.setItem("username", username);
+
+      // ✅ Save JWT & user info to localStorage
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("user_id", data.user_id);
+      localStorage.setItem("username", data.username);
+
+      // ✅ Update context
+      login(data.access_token);
+
+      // Redirect
       navigate("/");
     } catch (err) {
       setError("Server error, try again later");
